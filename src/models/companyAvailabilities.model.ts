@@ -6,7 +6,7 @@ export class CompanyAvailabilitiesModel {
   endDate: Date;
 
   // eslint-disable-next-line require-jsdoc
-  constructor(opening, recurring, startDate, endDate) {
+  constructor(opening: boolean, recurring: boolean, startDate: Date, endDate: Date) {
     this.opening = opening;
     this.recurring = recurring;
     this.startDate = startDate;

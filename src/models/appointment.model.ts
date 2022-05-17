@@ -4,7 +4,7 @@ export class AppointmentModel {
   toDate: Date;
 
   // eslint-disable-next-line require-jsdoc
-  constructor(fromDate, toDate) {
+  constructor(fromDate: Date, toDate: Date) {
     this.fromDate = fromDate;
     this.toDate = toDate;
   }
