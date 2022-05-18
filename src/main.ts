@@ -31,8 +31,6 @@ calculateAvailabilities(companyAvailabilitiesList, appointment);
 function calculateAvailabilities(
     companyAvailabilitiesList: CompanyAvailabilitiesModel[],
     appointment: AppointmentModel) : void {
-  // eslint-disable-next-line max-len
-  // TODO : Improve func to a single loop
   for (const availability of companyAvailabilitiesList) {
     // eslint-disable-next-line max-len
     // 1) Add all available company appointments to an array (recurring & ordering == true)
@@ -47,9 +45,29 @@ function calculateAvailabilities(
   displayAvailabilityList(appointment);
 }
 
+// Generate output text to display
 function displayAvailabilityList(appointment: AppointmentModel) : void {
-  console.log(...dayAvailabitiesList);
-  console.log(appointment.fromDate.getDay());
+  let outPutText: string;
+  let outPutSlots: SlotAvailabilities[];
+  const appointmentCopy: AppointmentModel = appointment;
+  while (appointmentCopy.fromDate.getDay() !== appointmentCopy.toDate.getDay()) {
+    for (const day of dayAvailabitiesList) {
+      if (day.dayNumber === appointmentCopy.fromDate.getDay()) {
+        outPutText = `* I\'m available from ${appointmentCopy.fromDate.toLocaleString('en-US', {month: 'long'})}`;
+        outPutText+= ` ${appointmentCopy.fromDate.getDate()}, at `;
+        outPutSlots = day.slot.filter((slot) => slot.status == true);
+        for (const [key, slot] of Object.entries(outPutSlots)) {
+          if (Number(key) === outPutSlots.length-1) {
+            outPutText+= 'and ' + slot.hour;
+          } else {
+            outPutText+= slot.hour + ', ';
+          }
+        }
+        console.log(outPutText);
+      }
+    }
+    appointmentCopy.fromDate.setDate(appointmentCopy.fromDate.getDate() + 1);
+  }
 }
 
 function updateDayAvailabilitiesList(availability : CompanyAvailabilitiesModel) : void {
