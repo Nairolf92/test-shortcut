@@ -1,10 +1,10 @@
 // eslint-disable-next-line require-jsdoc
-export class DayAvailibilitiesModel {
+export class DayAvailabilitiesModel {
   dayNumber: number = 0;
-  slot: SlotAvailibitilies[] = [];
+  slot: SlotAvailabilities[] = [];
 }
 // eslint-disable-next-line require-jsdoc
-export class SlotAvailibitilies {
+export class SlotAvailabilities {
   hour: string = '';
   status: boolean = true;
 }
