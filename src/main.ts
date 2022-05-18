@@ -3,7 +3,7 @@ import {AppointmentModel} from './models/appointment.model';
 import {DayAvailabilitiesModel, SlotAvailabilities} from './models/dayAvailabilities.model';
 
 const companyAvailabilitiesList: CompanyAvailabilitiesModel[] = [];
-const dayAvailabitiesList: DayAvailabilitiesModel[] = [];
+const dayAvailabilitiesList: DayAvailabilitiesModel[] = [];
 let availability: CompanyAvailabilitiesModel;
 
 // recurring schedule of a company
@@ -37,7 +37,7 @@ function calculateAvailabilities(
     if (availability.opening === true && availability.recurring === true) {
       addCompanyRecurrentAvailibilities(appointment, availability);
     } else if (availability.opening === false && availability.recurring === false) {
-      // 2) Change the appointments from dayAvailabitiesList already taken using availability (recurring & ordering == false)
+      // 2) Change the appointments from dayAvailabilitiesList already taken using availability (recurring & ordering == false)
       updateDayAvailabilitiesList(availability);
     }
   }
@@ -51,7 +51,7 @@ function displayAvailabilityList(appointment: AppointmentModel) : void {
   let outPutSlots: SlotAvailabilities[];
   const appointmentCopy: AppointmentModel = appointment;
   while (appointmentCopy.fromDate.getDay() !== appointmentCopy.toDate.getDay()) {
-    for (const day of dayAvailabitiesList) {
+    for (const day of dayAvailabilitiesList) {
       if (day.dayNumber === appointmentCopy.fromDate.getDay()) {
         outPutText = `* I\'m available from ${appointmentCopy.fromDate.toLocaleString('en-US', {month: 'long'})}`;
         outPutText+= ` ${appointmentCopy.fromDate.getDate()}, at `;
@@ -75,7 +75,7 @@ function updateDayAvailabilitiesList(availability : CompanyAvailabilitiesModel) 
   const startHour: string = formatStartHour(availability);
   const originalDiffTime: number = Math.abs(availability.startDate.getTime() - availability.endDate.getTime()) / 36e5;
   let diffTime: number = 0;
-  for (const day of dayAvailabitiesList) {
+  for (const day of dayAvailabilitiesList) {
     if (day.dayNumber === appointmentDayNumber) {
       // Iterate through all the slots to see if schedule is already taken
       for (const slot of day.slot) {
@@ -104,7 +104,7 @@ function formatEndHour(availability: CompanyAvailabilitiesModel) : string {
   return addZeroAfter(availability.endDate.getHours())+':'+addZeroAfter(availability.endDate.getMinutes());
 }
 
-// Add to dayAvailabitiesList the number of day concerned and a list of appointments with a status equal true
+// Add to dayAvailabilitiesList the number of day concerned and a list of appointments with a status equal true
 function addCompanyRecurrentAvailibilities(
     appointment : AppointmentModel,
     availability : CompanyAvailabilitiesModel) : void {
@@ -128,5 +128,5 @@ function addCompanyRecurrentAvailibilities(
     }
   }
   dayAvailabilities.slot = slotsList;
-  dayAvailabitiesList.push(dayAvailabilities);
+  dayAvailabilitiesList.push(dayAvailabilities);
 }
