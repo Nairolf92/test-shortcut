@@ -5,20 +5,20 @@ import {DayAvailabilitiesModel, SlotAvailabilities} from './models/dayAvailabili
 const companyAvailabilitiesList: CompanyAvailabilitiesModel[] = [];
 
 // eslint-disable-next-line require-jsdoc
-export function calculateAvailabilities(appointment: AppointmentModel) : void {
+export function calculateAvailabilities(appointment: AppointmentModel) : string {
   let dayAvailabilitiesList: DayAvailabilitiesModel[] = [];
   for (const availability of companyAvailabilitiesList) {
     // eslint-disable-next-line max-len
     // 1) Add all available company appointments to an array (recurring & ordering == true)
     if (availability.opening === true && availability.recurring === true) {
-      dayAvailabilitiesList = addCompanyRecurrentAvailibilities(appointment, availability);
+      dayAvailabilitiesList = addCompanyRecurrentAvailabilities(appointment, availability);
     } else if (availability.opening === false && availability.recurring === false) {
       // 2) Change the appointments from dayAvailabilitiesList already taken using availability (recurring & ordering == false)
       dayAvailabilitiesList = updateDayAvailabilitiesList(availability, dayAvailabilitiesList);
     }
   }
   // 3) Return the appointments available from the company
-  displayAvailabilityList(appointment, dayAvailabilitiesList);
+  return displayAvailabilityList(appointment, dayAvailabilitiesList);
 }
 
 export function addToCompanyAvailabilitiesList(opening: boolean, recurring: boolean, startDate: Date, endDate: Date) : void {
@@ -27,8 +27,8 @@ export function addToCompanyAvailabilitiesList(opening: boolean, recurring: bool
 }
 
 // Generate output text to display
-function displayAvailabilityList(appointment: AppointmentModel, dayAvailabilitiesList: DayAvailabilitiesModel[]) : void {
-  let outPutText: string;
+function displayAvailabilityList(appointment: AppointmentModel, dayAvailabilitiesList: DayAvailabilitiesModel[]) : string {
+  let outPutText: string = 'No results found';
   let outPutSlots: SlotAvailabilities[];
   const appointmentCopy: AppointmentModel = appointment;
   while (appointmentCopy.fromDate.getDay() !== appointmentCopy.toDate.getDay()) {
@@ -49,6 +49,7 @@ function displayAvailabilityList(appointment: AppointmentModel, dayAvailabilitie
     }
     appointmentCopy.fromDate.setDate(appointmentCopy.fromDate.getDate() + 1);
   }
+  return outPutText;
 }
 
 function updateDayAvailabilitiesList(availability : CompanyAvailabilitiesModel, dayAvailabilitiesList: DayAvailabilitiesModel[]) : DayAvailabilitiesModel[] {
@@ -60,7 +61,7 @@ function updateDayAvailabilitiesList(availability : CompanyAvailabilitiesModel, 
     if (day.dayNumber === appointmentDayNumber) {
       // Iterate through all the slots to see if schedule is already taken
       for (const slot of day.slot) {
-        // If slot.hour is equal to the apointment already taken or if there is a still difference time between the appointment start date and end date
+        // If slot.hour is equal to the appointment already taken or if there is a still difference time between the appointment start date and end date
         if (slot.hour === startHour || diffTime !== 0) {
           if (diffTime !== originalDiffTime) {
             // 0.5 is corresponding to 30min
@@ -79,7 +80,7 @@ function addZeroAfter(n: number) : string {
 }
 
 function formatStartHour(availability: CompanyAvailabilitiesModel) : string {
-  return addZeroAfter(availability.startDate.getHours())+':'+addZeroAfter(availability.startDate.getMinutes());
+  return (addZeroAfter(availability.startDate.getHours()))+':'+addZeroAfter(availability.startDate.getMinutes());
 }
 
 function formatEndHour(availability: CompanyAvailabilitiesModel) : string {
@@ -87,7 +88,7 @@ function formatEndHour(availability: CompanyAvailabilitiesModel) : string {
 }
 
 // Add to dayAvailabilitiesList the number of day concerned and a list of appointments with a status equal true
-function addCompanyRecurrentAvailibilities(
+function addCompanyRecurrentAvailabilities(
     appointment : AppointmentModel,
     availability : CompanyAvailabilitiesModel) : DayAvailabilitiesModel[] {
   const dayAvailabilities: DayAvailabilitiesModel = new DayAvailabilitiesModel();
